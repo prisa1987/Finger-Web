@@ -1,0 +1,201 @@
+@charset "utf-8";
+
+/*all of elements*/
+#container{
+    padding: 20px 20px ;
+    font-family: "TH Sarabun PSK", Helvetica, Arial, sans-serif
+}
+
+/*head = banner + menubar */
+#head{
+    /*width: 100px;*/
+    background-color: #eee;
+}
+
+#banner{
+    height:28vh; 
+}
+
+#body{
+    /*text-align: center;*/
+}
+
+#title h3{
+    font-weight: bold;
+    font-size: 30px;
+}
+
+#content{
+    
+}
+
+#header , #criminal , #officer , #other{
+    /*line-height: 260%;*/
+}
+#right{
+    /*width:220vh;*/
+    /*display:inline-block;*/
+}
+
+#detail{
+    /*float: left;*/
+}
+
+input[type="text"], input[type="date"], input[type="password"], input[type="email"], select{
+    margin-right:2em;
+    margin-left:4em;
+    margin-bottom:0.5em;
+}
+
+#identity, #passwordlogin{
+    margin-right:0em;
+    margin-left:0em;
+    margin-bottom:0em;
+}
+
+label{
+    /*width:300px;*/
+}
+
+/*set smaller div(detail, header) in center of bigger div(form)*/
+#detail, #header{
+    width: 50%;
+    margin: 0 auto;
+}
+
+/*submit button align in center*/
+#submit{ 
+    /*margin: -20px -50px; */
+    position:relative;
+    top:50%; 
+    left:50%;
+}
+
+.bold{
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.upload{
+    width:250px;
+    text-align:center;
+    position: relative;
+}
+.addedIMG {
+    width: 200px;
+    height: 200px;
+}
+
+.drop{
+    width:250px;
+    height:250px;
+}
+.uploadarea{
+    width:250px;
+    height:250px;
+    background:#e7e7e7;
+    vertical-align: middle;
+    border-style: dashed;
+    border-radius: 10px;
+}
+
+.uploadlabel{
+    /*width:220px;*/
+    font-size:25px;
+}
+table {
+    width: 100%;
+    padding: 50px;
+    margin:auto;
+}
+td {
+    padding:5px;
+}
+input[type="file"]{
+    /*width:250px;
+    height:250px;*/
+    /*opacity: 0; */
+    /*position:absolute;*/
+}
+
+.outputarea{
+    width:250px;
+    height:250px;
+    background:#BFBEBE;
+    border-radius: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    /*padding: 15px 15px ;*/
+}
+
+.uploadlabelarea{
+    text-align:center;
+    /*padding: 15px 15px ;*/
+}
+
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.thumbnail{
+margin-left: 100px;
+margin-top:20px;
+    width:250px;
+    height:260px;
+}
+
+.thumbnail>img{
+    display: inline;
+    width:250px;
+    height:250px;
+}
+
+#formProbe{
+    margin-left: 100px;
+}
+
+#tableResult{
+    margin-top: 10px;
+}
+
+th{
+    text-align: center;
+}
+
+ .container{
+    
+    margin-top: 150px;
+    margin-left:23%
+
+}
+
+.progress{
+     margin-left: -100px;
+     /*margin-top: 150px;*/
+      width: 460px;
+}
+
+
+.Original_result img{
+     width:150px;
+    height:160px;
+}
+
+.Match_result img{
+    width:150px;
+    height:160px;
+}
+
