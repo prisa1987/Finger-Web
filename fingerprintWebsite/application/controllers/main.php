@@ -604,7 +604,10 @@
 
 		// save right hand files
 		function uploadRightHand(){
-
+			$userdata = $this->session->userdata('userdata');
+			$mask = 'assets/images/temporary/'.$userdata['email'].'/*';
+			echo $mask;
+			 array_map('unlink', glob($mask));
 			$this->session->set_userdata('right_thumb',$this->save_images('right_thumb'));
 			$this->session->set_userdata('right_fore',$this->save_images('right_fore'));
 			$this->session->set_userdata('right_middle',$this->save_images("right_middle"));

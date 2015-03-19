@@ -21,12 +21,14 @@ class Auth extends CI_Controller {
 			redirect('auth/loadLogin', 'refresh');
 		}
 		else{
+			
 			redirect('form_controller/loadForm1','refresh');
 		}
 	}
 
 	// load login page
 	function loadLogin(){
+		
 		$data = $this->session->flashdata('data');
 		if(empty($data)){
 			$data = array('identity' => '', 
