@@ -16,19 +16,11 @@
 			    <form class="navbar-form navbar-left">
 			        <button class="btn btn-default" type="button" id="logout" name="logout"><?php echo anchor('auth/logout','ออกจากระบบ');?></button>
 			    </form>
-			    <!-- <ul class="nav navbar-nav navbar-right">
-				    <li><a class="navbar-brand">หน้า : </a></li>
-				    <li class="active"><a>1</a></li>
-				    <li><?php echo anchor('form_controller/loadUploadSign','1');?></li>
-				    <li><?php echo anchor('form_controller/loadUploadRightHand','2');?></li>
-				    <li><?php echo anchor('form_controller/loadUploadLeftHand','3');?></li>
-				    <li><?php echo anchor('form_controller/loadUploadBothHand','4');?></li>
-				</ul> -->
 		  	</div>
 		</nav>
 	</div>
-	<div id="body" class="body">
-        <div class="panel panel-default" id="title" class="title">
+	<div id="body" class="body row">
+        <div class="panel panel-default row col-md-12" id="title" class="title">
             <div class="panel-heading row">
                 <h3 class="panel-title">แบบพิมพ์ลายนิ้วมือ ผู้ต้องหา ฯลฯ</h3>
             </div>
@@ -39,6 +31,7 @@
             		echo "<br><table id='tableResult' class='table table-striped col-md-4'>";
             		echo "<thead><th> No. </th>";
             		echo "<th> criminalName </th>";
+            		echo "<th> organisation </th>";
             		echo "<th> scores </th>";
             		echo "<th> ดูรูป </th>";
             		// echo "<th> Image from DB </th></thead>";
@@ -52,22 +45,10 @@
 	            		echo "<td>".$json[$i]['Id']."</td>";
 	            		// echo "<td>".$json[$i]['imageID']."</td>";
 	            		echo "<td>".$json[$i]['name']."</td>";
+	            		echo "<td>".$json[$i]['organisation']."</td>";
 	            		echo "<td>".$json[$i]['score']."</td>";
-	            		echo "<td><a href='loadImage/".$json[$i]['name']."'> ดู </a></td>";
-	            		/* srcImage seach folder */
-	     //        		$subFile =  explode("/",$json[$i]['srcImage']);
+	            		echo "<td><a href='loadImage/".$json[$i]['Id']."/".$json[$i]['organisation']."'> ดู </a></td>";
 
-						// $srcPath =  $subFile[9]."/".$subFile[10]."/".$subFile[11]."/".$subFile[12];
-						// if(count($subFile)==13) {
-	     //        			echo "<td><image src='".base_url().$srcPath."' style='width:150px;height:150px;'></td>";
-	     //        		 // echo "<td><image src='".$json[$i]['srcImage']."' style='width:150px;height:150px;'></td>";
-	     //        		}
-	     //        		/* imageName in db */
-	     //        		$subFile =  explode("/",$json[$i]['imageName']);
-	     //        		if(count($subFile)==14) {
-	     //        				$imagePath =  $subFile[9]."/".$subFile[10]."/".$subFile[11]."/".$subFile[12]."/".$subFile[13]; 
-	     //        				echo "<td><image src='".base_url().$imagePath."' style='width:150px;height:150px;'></td>";
-	     //        		}
 	            		echo "</tr>";
 	            	}
 	            	echo "</table>";
@@ -77,11 +58,21 @@
             	}
             ?>
             </div>
+
             </div>
         </div>
-		<div id="content" class="content">	
+        <div >
+		 <a href= <?php echo base_url().'index.php/'."form_controller/loadForm1"?> >
+			<button type="button"  class="btn btn-primary btn-lg" style="display:block; float:right; margin-right: 230px;" >
+							กลับสู่หน้าหลัก </button>
+		</a> 
+
 		</div>
+		
 	</div>
+
+
+		        	
 </div>
 </body>
 </html>

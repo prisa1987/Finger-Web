@@ -13,7 +13,7 @@
 	 <?php echo form_open_multipart("form_controller/loadForm");?>
 	<p style="margin-left:20%" >
 	  <button type="submit" name="submit"  class="btn btn-primary btn-lg">ลงทะเบียน </button>
-	  <button type="button" class="btn btn-default btn-lg"> ไม่ต้องการ </button>
+	 <a href= <?php echo base_url().'index.php/'."form_controller/loadForm1"?> > <button type="button" class="btn btn-default btn-lg"> ไม่ต้องการ </button> </a>
 	</p>
 	</form>
 			

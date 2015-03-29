@@ -46,15 +46,14 @@
 			$client->decode_utf8 = false;
 			$data = $client->call("Load_PersonScore",array('mail' => $userdata['email']));
 			$id = $this->findID($userdata['email']); 
-			//	print_r(  $data['Load_PersonScoreResult'] );
+				// print_r(  $data );
 			if($data != null)  { 
 					// print_r($data['FingerAppResult']);
 				$this->decodeJSON($data['Load_PersonScoreResult']);
 					// $this->setJSONPerson($data['FingerAppResult']);
 			}
 			else {
-				//Store Data
-				echo "NOOO";
+				echo "Please check the connection of Fingerprint Application";
 			}
 
 		}
@@ -76,15 +75,15 @@
 
 
 
-		function loadImage($id){
+		function loadImage($id,$organisation){
 			
 			$userdata = $this->session->userdata('userdata');
 			$data['email'] = $userdata['email'];
 			$data['username'] = $userdata['username'];
 			$data['originalImages'] = $this->getOrginalImage($data['email']);
-			$data['FingerMatchesImages'] = $this->getMatchesImage($data['originalImages'],$id);
+			$data['FingerMatchesImages'] = $this->getMatchesImage($data['originalImages'],$id,$organisation);
 			//print_r($data['FingerMatchesImages']);
-			$data['score'] = $this->getFingerScore($data['FingerMatchesImages'],$data['originalImages']);
+			$data['scoreAndImg'] = $this->getFingerScore($data['FingerMatchesImages'],$data['originalImages']);
 			// print_r($data['FingerMatchesImages'][0] );
 			$this->load->view("FingerPrints_view.php",$data);
 
@@ -106,7 +105,7 @@
 
 		}
 
-		function getMatchesImage($originalImages,$id){
+		function getMatchesImage($originalImages,$id,$organisation){
 			
 			// if($fingerPos == "criminal_sign") return getMatchesImage_criminal_sign($id);
 
@@ -117,24 +116,28 @@
 				
 				$subFile =  explode("/",$key);
 				$subFilename = explode("_", $subFile[4]);
-				$fingerPos = $subFilename[0]." ".$subFilename[1];
-				$fingerPosFolder = $subFilename[0]."_".$subFilename[1];
-			
-				if($fingerPosFolder == "right_thumb") array_push($FingerMatchesImages,$this->getMatchesImage_right_thumb($id));
-				else if($fingerPosFolder == "right_little") array_push($FingerMatchesImages,$this->getMatchesImage_right_little($id));
-				else if($fingerPosFolder == "right_middle") array_push($FingerMatchesImages,$this->getMatchesImage_right_middle($id));
-				else if($fingerPosFolder == "right_ring") array_push($FingerMatchesImages,$this->getMatchesImage_right_ring($id));
-				else if($fingerPosFolder == "right_fore") array_push($FingerMatchesImages,$this->getMatchesImage_right_fore($id));
+				$fingerPos = $subFilename[1];
+				$fingerPosWithoutExtSplit = explode(".", 	$fingerPos );
+				$fingerPosWithoutExt = $fingerPosWithoutExtSplit[0];
+				// $fingerPosFolder = $subFilename[0]."_".$subFilename[1];
+				// echo $fingerPosWithoutExt."</br>";
+				if($fingerPosWithoutExt == "R0") array_push($FingerMatchesImages,$this->getMatchesImage_right_thumb($id,$organisation));
+				else if($fingerPosWithoutExt == "R4") array_push($FingerMatchesImages,$this->getMatchesImage_right_little($id,$organisation));
+				else if($fingerPosWithoutExt == "R2") array_push($FingerMatchesImages,$this->getMatchesImage_right_middle($id,$organisation));
+				else if($fingerPosWithoutExt == "R3") array_push($FingerMatchesImages,$this->getMatchesImage_right_ring($id,$organisation));
+				else if($fingerPosWithoutExt == "R1") array_push($FingerMatchesImages,$this->getMatchesImage_right_fore($id,$organisation));
 
-				else if($fingerPosFolder == "left_thumb") array_push($FingerMatchesImages,$this->getMatchesImage_left_thumb($id));
-				else if($fingerPosFolder == "left_little") array_push($FingerMatchesImages,$this->getMatchesImage_left_little($id));
-				else if($fingerPosFolder == "left_middle") array_push($FingerMatchesImages,$this->getMatchesImage_left_middle($id));
-				else if($fingerPosFolder == "left_ring") array_push($FingerMatchesImages,$this->getMatchesImage_left_ring($id));
-				else if($fingerPosFolder == "left_fore") array_push($FingerMatchesImages,$this->getMatchesImage_left_fore($id));
+				else if($fingerPosWithoutExt == "L0") array_push($FingerMatchesImages,$this->getMatchesImage_left_thumb($id,$organisation));
+				else if($fingerPosWithoutExt == "L4") array_push($FingerMatchesImages,$this->getMatchesImage_left_little($id,$organisation));
+				else if($fingerPosWithoutExt == "L2") array_push($FingerMatchesImages,$this->getMatchesImage_left_middle($id,$organisation));
+				else if($fingerPosWithoutExt == "L3") array_push($FingerMatchesImages,$this->getMatchesImage_left_ring($id,$organisation));
+				else if($fingerPosWithoutExt == "L1") array_push($FingerMatchesImages,$this->getMatchesImage_left_fore($id,$organisation));
 
 
 				// if($fingerPosFolder == "right_thumb") array_push($FingerMatchesImages,$a);
-				
+				// echo "array : ";
+				// print_r($FingerMatchesImages);
+				// echo "</br>";				
 				// $this->session->set_userdata('FingerMatchesImages',$FingerMatchesImages);
 			}
 
@@ -144,11 +147,13 @@
 
 		}
 
-		function getMatchesImage_criminal_sign($id){
-			$path = 'assets/images/form/'; 
-			$Folder = 'criminal_sign';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
 
+		function getMatchesImage_left_fore($id,$organisation){
+			$path = 'assets/images/form/'; 
+			$Folder = 'left_fore/';
+			$id_Folder = $id.'_'.$Folder;
+			$fingerPosition = 'L1';
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
 			$result = glob ($File );
 			
 			$images = $File;
@@ -158,11 +163,12 @@
 			return $images;
 		}
 
-		function getMatchesImage_fingerprint_number($id){
+		function getMatchesImage_left_little($id,$organisation){
 			$path = 'assets/images/form/'; 
-			$Folder = 'fingerprint_number';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
-
+			$Folder = 'left_little/';
+			$id_Folder = $id.'_'.$Folder;
+			$fingerPosition = 'L4';
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
 			$result = glob ($File );
 			
 			$images = $File;
@@ -172,10 +178,12 @@
 			return $images;
 		}
 
-		function getMatchesImage_left_fore($id){
+		function getMatchesImage_left_middle($id,$organisation){
 			$path = 'assets/images/form/'; 
-			$Folder = 'left_fore';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
+			$Folder = 'left_middle/';
+			$id_Folder = $id.'_'.$Folder;
+			$fingerPosition = 'L2';
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
 			$result = glob ($File );
 			
 			$images = $File;
@@ -185,10 +193,12 @@
 			return $images;
 		}
 
-		function getMatchesImage_left_little($id){
+		function getMatchesImage_left_ring($id,$organisation){
 			$path = 'assets/images/form/'; 
-			$Folder = 'left_little';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
+			$Folder = 'left_ring/';
+			$id_Folder = $id.'_'.$Folder;
+			$fingerPosition = 'L3';
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
 			$result = glob ($File );
 			
 			$images = $File;
@@ -198,92 +208,31 @@
 			return $images;
 		}
 
-		function getMatchesImage_left_middle($id){
+		function getMatchesImage_left_thumb($id,$organisation){
 			$path = 'assets/images/form/'; 
-			$Folder = 'left_middle';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
+			$Folder = 'left_thumb/';
+			$id_Folder = $id.'_'.$Folder;
+			$fingerPosition = 'L0';
+			echo "or: ". $organisation;
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
+
+			// echo $File;
 			$result = glob ($File );
 			
-			$images = $File;
+			  // print_r($result);
 			if(count($result)> 0){
-				$images = $result[0];
-			}
+				$images = $result;
+			 }
 			return $images;
-		}
-
-		function getMatchesImage_left_ring($id){
-			$path = 'assets/images/form/'; 
-			$Folder = 'left_ring';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
-
-			$result = glob ($File );
-			
-			$images = $File;
-			if(count($result)> 0){
-				$images = $result[0];
-			}
-			return $images;
-		}
-
-		function getMatchesImage_left_thumb($id){
-			$path = 'assets/images/form/'; 
-			$Folder = 'left_thumb';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
-
-			$result = glob ($File );
-			
-			$images = $File;
-			if(count($result)> 0){
-				$images = $result[0];
-			}
-			return $images;
+		
 		}
 		
-		function getMatchesImage_left_thumb_hand($id){
+		function getMatchesImage_right_fore($id,$organisation){
 			$path = 'assets/images/form/'; 
-			$Folder = 'left_thumb_hand';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
-
-			$result = glob ($File );
-			
-			$images = $File;
-			if(count($result)> 0){
-				$images = $result[0];
-			}
-			return $images;
-		}
-
-		function getMatchesImage_lefthand($id){
-			$path = 'assets/images/form/'; 
-			$Folder = 'lefthand';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
-			$result = glob ($File );
-			
-			$images = $File;
-			if(count($result)> 0){
-				$images = $result[0];
-			}
-			return $images;
-		}
-
-		function getMatchesImage_officer_sign($id){
-			$path = 'assets/images/form/'; 
-			$Folder = 'officer_sign';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
-
-			$result = glob ($File );
-			
-			$images = $File;
-			if(count($result)> 0){
-				$images = $result[0];
-			}
-			return $images;
-		}
-
-		function getMatchesImage_right_fore($id){
-			$path = 'assets/images/form/'; 
-			$Folder = 'right_fore';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
+			$Folder = 'right_fore/';
+			$id_Folder = $id.'_'.$Folder;
+			$fingerPosition = 'R1';
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
 			$result = glob ($File );
 		//	print_r($result);
 						//$images = $File;
@@ -293,10 +242,12 @@
 			return $images;
 		}
 
-		function getMatchesImage_right_little($id){
+		function getMatchesImage_right_little($id,$organisation){
 			$path = 'assets/images/form/'; 
-			$Folder = 'right_little';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
+			$Folder = 'right_little/';
+			$id_Folder = $id.'_'.$Folder;
+			$fingerPosition = 'R4';
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
 			$result = glob ($File );
 			
 			$images = $File;
@@ -306,10 +257,12 @@
 			return $images;
 		}
 
-		function getMatchesImage_right_middle($id){
+		function getMatchesImage_right_middle($id,$organisation){
 			$path = 'assets/images/form/'; 
-			$Folder = 'right_middle';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
+			$Folder = 'right_middle/';
+			$id_Folder = $id.'_'.$Folder;
+			$fingerPosition = 'R2';
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
 		$result = glob ($File );
 			
 			$images = $File;
@@ -319,10 +272,12 @@
 			return $images;
 		}
 
-		function getMatchesImage_right_ring($id){
+		function getMatchesImage_right_ring($id,$organisation){
 			$path = 'assets/images/form/'; 
-			$Folder = 'right_ring';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
+			$Folder = 'right_ring/';
+			$id_Folder = $id.'_'.$Folder;
+			$fingerPosition = 'R3';
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
 			$result = glob ($File );
 		
 			if(count($result)> 0){
@@ -331,46 +286,24 @@
 			return $images;
 		}
 
-		function getMatchesImage_right_thumb($id){
+		function getMatchesImage_right_thumb($id,$organisation){
 			$path = 'assets/images/form/'; 
-			$Folder = 'right_thumb';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
+			$Folder = 'right_thumb/';
+			$id_Folder = $id.'_'.$Folder;
+			$fingerPosition = 'R0';
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
+
+			// echo $File;
 			$result = glob ($File );
 			
-			
+			 // print_r($result);
 			if(count($result)> 0){
-				$images = $result[0];
-			}
+				$images = $result;
+			 }
 			return $images;
 		}
 		
-		function getMatchesImage_right_thumb_hand($id){
-			$path = 'assets/images/form/'; 
-			$Folder = 'right_thumb_hand';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
-
-			$result = glob ($File );
-			
-			$images = $File;
-			if(count($result)> 0){
-				$images = $result[0];
-			}
-			return $images;
-		}
-
-		function getMatchesImage_righthand($id){
-			$path = 'assets/images/form/'; 
-			$Folder = 'righthand';
-			$File = $path.$Folder."/".$Folder."_".$id.".*";
-
-			$result = glob ($File );
-			
-			$images = $File;
-			if(count($result)> 0){
-				$images = $result[0];
-			}
-			return $images;
-		}
+	
 
 		function getFingerScore($FingerDBArray,$ProbeArray){
 			
@@ -379,74 +312,104 @@
 			$client = new nusoap_client("http://127.0.0.1:8080/webservice.asmx?wsdl",TRUE);
 			$client->soap_defencoding = 'UTF-8';
 			$client->decode_utf8 = false;
-			$score = array();
-			// print_r($FingerDBArray);
-			// print_r($ProbeArray);
+			
+
+
+			// echo "</br>-------------------</br>";
+			  // print_r($FingerDBArray);
+			  // echo "</br>";
+			  // print_r($ProbeArray);
+			// $ProbeArray[0];
+			
+			
+			// echo "</br>-------------------</br>";
 			$i = 0;
-			foreach ($ProbeArray as $key ) {
-				$params = array('FingerDBArray' => $FingerDBArray[$i],
-					'ProbeArray' => $key
+			$j = 0;
+			$MaxScoreFingerAray = array();
+			 foreach ($FingerDBArray as $key ) {
+			 	// echo "</br>";
+			 	// echo "key : ";
+			 	// print_r($key);
+			 	$scoreSameFingerPosition = array();
+			$imgSameFingerPosition = array();
+				foreach ($key as $value ){
+					$ProbeArraysplit =	explode("/",$ProbeArray[$j]);
+					$FingerDBArraysplit = explode("/",$value);
+					$FingerPostionDBArraySpilt = explode("_",$FingerDBArraysplit[5]);
+					$FingerPostionProbeArraySplit = explode("_",$ProbeArraysplit[4]);
+					// print_r($FingerPostionProbeArraySplit);
+					$FingerPostionProbeArraySplitWithoutExt = explode(".", $FingerPostionProbeArraySplit [1]);
+					$FingerPostionProbeArray = $FingerPostionProbeArraySplitWithoutExt[0];
+					$FingerPostionDBArray = $FingerPostionDBArraySpilt[2];
+					// echo "value : ";
+			 		// print_r($value);
+					// echo "</br>==============</br>";
+					// echo "Probe: ".$FingerPostionProbeArray;
+					 // echo "</br>";
+					 // echo "DB : ".$FingerPostionDBArray;
+					 // echo "</br>";
+					 // echo "==============</br></br>";
+					if($FingerPostionDBArray != $FingerPostionProbeArray ){
+						$j++;
+						// echo "Change : ".$ProbeArray[$j];
+						// $FingerPostionProbeArray = $FingerPostionDBArray;
+					}
+					// print_r($value);
+					// echo "</br>";
+					 // print_r($ProbeArray);
+
+					$params = array('FingerDBArray' => $value,
+						'ProbeArray' => $ProbeArray[$j]
 					);
-				echo "FingerDBArray : ".$FingerDBArray[$i]."</br>";
-				echo "ProbeArray : ".$key."</br>";
-				$data = $client->call("Load_AFingerScore",$params);
-				//print_r($data);
-				$myArray = json_decode($data["Load_AFingerScoreResult"], true);
-
-				array_push($score, $myArray);
-				 //print_r($data["Load_AFingerScoreResult"]);
-				$i++;
-
+					 // echo "</br>======================================================================</br>";
+					 // echo "FingerDBArray : ".$value."</br>";
+					 // echo "ProbeArray : ".$ProbeArray[$j]."</br>";
 				
-			}
-			//print_r($myArray);
-			return  $score;
+					$data = $client->call("Load_AFingerScore",$params);
+					//print_r($data);
+					$myArray = json_decode($data["Load_AFingerScoreResult"], true);
 
-		}
-
-		function search(){
-			$userdata = $this->session->userdata('userdata');
-			for($i = 1; $i<=10; $i++){
-				$file = 'finger_'.$i;
-
-				$exe = $this->saveSearch($file);
-				$filename = $file."_".$userdata['email'].".".$exe;
-				if(file_exists("assets/images/search/".$filename)) {
-					// echo "<script>alert('$filename')</script>";
-					$this->session->set_userdata($file,$exe);
-					// $data[$i] = $filename;
+					array_push($scoreSameFingerPosition, $myArray);
+					array_push($imgSameFingerPosition,$value );
+					// echo "score : ";
+					// print_r($data["Load_AFingerScoreResult"]);
+					//echo "</br>";
+ 					//echo "=======================================================================";
+					 
 
 				}
+				$i++;
+				// echo "================================== Conclusion ====================================="."</br>";
+				$n = 0;
+				$SameFingerPosition= array();
+				foreach ($scoreSameFingerPosition as $score ) {
+					// echo $score;
+					$scoreFloat = floatval($score);
+					$array =array( $imgSameFingerPosition[$n] => $scoreFloat );
+					$SameFingerPosition= array_merge($SameFingerPosition, $array);
+					// echo $score."</br>";
+					$n++;
+				}
+				//print_r($SameFingerPosition);
+				arsort($SameFingerPosition);
+				
+				//echo "</br>"."------------------------ Sort array ---------------------.</br>";
+				//print_r($SameFingerPosition);
 
+				//echo "</br>"."---------------------------------------------------------.</br>";
+				//echo "===========================================================================================";
+		
+				$MaxScoreFingerKey = key($SameFingerPosition);
+				$MaxScoreFingerValue = reset($SameFingerPosition);
+				$arr = array($MaxScoreFingerKey=>$MaxScoreFingerValue);
+				 array_push($MaxScoreFingerAray , $arr );
 			}
-			$this->callWebService($userdata['email']);
+				
+			 // print_r($MaxScoreFingerAray[1]);
+			return  $MaxScoreFingerAray;
 
 		}
 
-		function saveSearch($filename){
-			$config['allowed_types']="jpg|jpeg|png|gif|bmp|jpe|tiff|tif";
-			$config['max_size']=4096;
-			$config['upload_path'] = 'assets/images/search/';
-			$this->upload->initialize($config);
-			$userdata = $this->session->userdata('userdata');
-			if(!file_exists($config['upload_path'])) mkdir($config['upload_path'],0777);
-
-			// chdir('C:/xampp/htdocs/fingerprint/'.$config['upload_path']);
-
-			// delete old file
-			$mask = 'assets/images/search/'.$filename.'_'.$userdata['email'].'.*';
-			// $file = 'assets/images/temporary/'.$filename.'_'.$userdata['email'].'.tif';
-			// unset($file);
-			array_map('unlink', glob($mask));
-
-			if($this->upload->do_upload($filename)){
-				$data=$this->upload->data();
-				$ans = $data['file_path'].$filename.'_'.$userdata['email'].$data['file_ext'];
-				// echo "<script>alert('$ans')</script>";
-				rename($data['full_path'],$data['file_path'].$filename.'_'.$userdata['email'].$data['file_ext']);
-				return substr($data['file_ext'],1);
-			}
-		}
 
 		/**
 		* Get data from input tag and store on db table 'form'
@@ -490,164 +453,106 @@
 			}
 		}
 
-		// save image to temporary folder
-		function save_images($filename){
-			//['bmp']   =>  array('image/bmp', 'รmage/x-ms-bmp');
+	function save_images($filename){
 		$userdata = $this->session->userdata('userdata');
+		$mask = 'assets/images/temporary/'.$userdata['email'].'/'.$userdata['email'].'_'.$filename.'.*';
+		
+		$sp = array();
+		if(count(glob($mask)) > 0){
+			$arr = glob($mask);
+			$sp = explode('.', $arr[0] );
+			// print_r($sp);
+		}
 		$config['allowed_types']="bmp|jpg|jpeg|png|gif|jpe|tiff|tif";
 		$config['max_size']=4096;
-		// $config['upload_path'] = 'assets/images/temporary/'; //Tonmai Code
-
-
 		$config['upload_path']  = 'assets/images/temporary/'.$userdata['email'].'/';
-		// echo "d: ".$config['upload_path'];
-		//$this->upload->initialize($config);
-		//$this->load->library('upload', $config);
 		$this->upload->initialize($config);
-		// $flgDelete = rmdir("thaicreate");
+	
 		if(!file_exists($config['upload_path'])) mkdir($config['upload_path'],0777);
 
-		// delete old file
 		
-		// $files = glob($mask.'/*'); // get all file names
-		//echo "File name : ".$filename ;
 		if($this->upload->do_upload($filename)){
 			$data=$this->upload->data();
-			rename($data['full_path'],$data['file_path'].$filename.'_'.$userdata['email'].$data['file_ext']);
+			if(count($sp) > 0 ){
+				if($sp[3] != $data['file_ext']) {
+					$mask = 'assets/images/temporary/'.$userdata['email'].'/'.$userdata['email'].'_'.$filename.'.'.$sp[3];
+					array_map('unlink', glob($mask));
+				}
+			}
+			rename($data['full_path'],$data['file_path'].$userdata['email'].'_'.$filename.$data['file_ext']);
 			return substr($data['file_ext'],1);
 		}
-		//  else{
-		 //		echo $this->upload->display_errors();
-		  //}
+		  // else{
+				// 	echo $this->upload->display_errors();
+		  // }
 		}
 
+		function uploadKnownFingerPosition(){
+			$userdata = $this->session->userdata('userdata');
+
+			
+			$this->session->set_userdata('R0',$this->save_images('R0'));
+			$this->session->set_userdata('R1',$this->save_images('R1'));
+			$this->session->set_userdata('R2',$this->save_images('R2'));
+			$this->session->set_userdata('R3',$this->save_images('R3'));
+			$this->session->set_userdata('R4',$this->save_images('R4'));
+			
+			$this->session->set_userdata('L0',$this->save_images('L0'));
+			$this->session->set_userdata('L1',$this->save_images('L1'));
+			$this->session->set_userdata('L2',$this->save_images('L2'));
+			$this->session->set_userdata('L3',$this->save_images('L3'));
+			$this->session->set_userdata('L4',$this->save_images('L4'));
+	
+ 			$this->requestIdentify();
+		}
+
+
+		function uploadUnKnownFingerPosition(){
+			$userdata = $this->session->userdata('userdata');
+			// $mask = 'assets/images/temporary/'.$userdata['email'].'/*';
+			// echo $mask;
+			// array_map('unlink', glob($mask));
+			$this->session->set_userdata('U0',$this->save_images('U0'));
+			$this->session->set_userdata('U1',$this->save_images('U1'));
+			$this->session->set_userdata('U2',$this->save_images('U2'));
+			$this->session->set_userdata('U3',$this->save_images('U3'));
+			$this->session->set_userdata('U4',$this->save_images('U4'));
+
+
+
+			$this->requestIdentify();
+		}
 		
-		// save signature files for area
-		function uploadSignatureArea(){
-			$userdata = $this->session->userdata('userdata');
-			// $src = 'assets/images/temporary/';
-			// if(file_exists($src.'criminal_sign_'.$userdata['email'].'.'.$this->session->userdata('criminal_sign'))&&
-			// 	file_exists($src.'officer_sign_'.$userdata['email'].'.'.$this->session->userdata('officer_sign'))&&
-			// 	file_exists($src.'fingerprint_number_'.$userdata['email'].'.'.$this->session->userdata('fingerprint_number'))){
-			redirect('form_controller/loadUploadRightHand','refresh');
-			// }
-			// else redirect('form_controller/loadUploadSign','refresh');
-		}
 
-		// save right hand files for area
-		function uploadRightHandArea(){
-			$userdata = $this->session->userdata('userdata');
-			// $src = 'assets/images/temporary/';
-			// if(file_exists($src.'right_thumb_'.$userdata['email'].'.'.$this->session->userdata('right_thumb'))&&
-			// 	file_exists($src.'right_fore_'.$userdata['email'].'.'.$this->session->userdata('right_fore'))&&
-			// 	file_exists($src.'right_middle_'.$userdata['email'].'.'.$this->session->userdata('right_middle'))&&
-			// 	file_exists($src.'right_ring_'.$userdata['email'].'.'.$this->session->userdata('right_ring'))&&
-			// 	file_exists($src.'right_little_'.$userdata['email'].'.'.$this->session->userdata('right_little'))){
-			redirect('form_controller/loadUploadLeftHand','refresh');
-			// }
-			// else redirect('form_controller/loadUploadRightHand','refresh');
-		}
-
-		// save left hand files for area
-		function uploadLeftHandArea(){
-			$userdata = $this->session->userdata('userdata');
-
-			redirect('form_controller/loadUploadBothHand','refresh');
-
-		}
-
-		// save both hand files for area
-		function uploadBothHandArea(){
-			$userdata = $this->session->userdata('userdata');
-
-
-		}
 
 		// clear all file extension and form data in session
 		function clearSession(){
-			$this->session->unset_userdata('criminal_sign');
-			$this->session->unset_userdata('officer_sign');
-			$this->session->unset_userdata('fingerprint_number');
+	
+			$this->session->unset_userdata('R0');
+			$this->session->unset_userdata('R1');
+			$this->session->unset_userdata('R2');
+			$this->session->unset_userdata('R3');
+			$this->session->unset_userdata('R4');
 
-			$this->session->unset_userdata('right_thumb');
-			$this->session->unset_userdata('right_fore');
-			$this->session->unset_userdata('right_middle');
-			$this->session->unset_userdata('right_ring');
-			$this->session->unset_userdata('right_little');
+			$this->session->unset_userdata('L0');
+			$this->session->unset_userdata('L1');
+			$this->session->unset_userdata('L2');
+			$this->session->unset_userdata('L3');
+			$this->session->unset_userdata('L4');
 
-			$this->session->unset_userdata('left_thumb');
-			$this->session->unset_userdata('left_fore');
-			$this->session->unset_userdata('left_middle');
-			$this->session->unset_userdata('left_ring');
-			$this->session->unset_userdata('left_little');
-
-			$this->session->unset_userdata('lefthand');
-			$this->session->unset_userdata('left_thumb_hand');
-			$this->session->unset_userdata('right_thumb_hand');
-			$this->session->unset_userdata('righthand');
+			$this->session->unset_userdata('U0');
+			$this->session->unset_userdata('U1');
+			$this->session->unset_userdata('U2');
+			$this->session->unset_userdata('U3');
+			$this->session->unset_userdata('U4');
 
 			$this->session->unset_userdata('formdata');
 		}
 
-		// save signature files
-		function uploadSignature(){
-			$userdata = $this->session->userdata('userdata');
-			$mask = 'assets/images/temporary/'.$userdata['email'].'/*';
-			//echo $mask;
-		    array_map('unlink', glob($mask));
-			$this->session->set_userdata('criminal_sign',$this->save_images('criminal_sign'));
-			$this->session->set_userdata('officer_sign', $this->save_images('officer_sign'));
-			$this->session->set_userdata('fingerprint_number',$this->save_images('fingerprint_number'));
-			redirect('form_controller/loadUploadRightHand','refresh');
-			
-		}
-
-		// save right hand files
-		function uploadRightHand(){
-			$userdata = $this->session->userdata('userdata');
-			$mask = 'assets/images/temporary/'.$userdata['email'].'/*';
-			echo $mask;
-			 array_map('unlink', glob($mask));
-			$this->session->set_userdata('right_thumb',$this->save_images('right_thumb'));
-			$this->session->set_userdata('right_fore',$this->save_images('right_fore'));
-			$this->session->set_userdata('right_middle',$this->save_images("right_middle"));
-			$this->session->set_userdata('right_ring',$this->save_images('right_ring'));
-			$this->session->set_userdata('right_little',$this->save_images("right_little"));
-			redirect('form_controller/loadUploadLeftHand','refresh');
-
-		}
-
-		// save left hand files
-		function uploadLeftHand(){
+		
 
 
-			$this->session->set_userdata('left_thumb',$this->save_images('left_thumb'));
-			$this->session->set_userdata('left_fore',$this->save_images('left_fore'));
-			$this->session->set_userdata('left_middle',$this->save_images("left_middle"));
-			$this->session->set_userdata('left_ring',$this->save_images('left_ring'));
-			$this->session->set_userdata('left_little',$this->save_images("left_little"));
-			//redirect('form_controller/loadUploadBothHand','refresh');
-
-			$userdata = $this->session->userdata('userdata');
-
-			$this->requestIdentify();
-			
-		}
-
-		// save both hand files
-		function uploadBothHand(){
-			
-			$this->session->set_userdata('lefthand',$this->save_images('lefthand'));
-			$this->session->set_userdata('left_thumb_hand',$this->save_images('left_thumb_hand'));
-			$this->session->set_userdata('right_thumb_hand',$this->save_images("right_thumb_hand"));
-			$this->session->set_userdata('righthand',$this->save_images('righthand'));
-
-	//		$userdata = $this->session->userdata('userdata');
-
-		//	$this->requestIdentify();
-
-
-		}
+		
 
 		// check data null value
 		function checkFormData(){
@@ -752,5 +657,5 @@
 		$this->session->set_userdata('formdata',$data);
 		redirect('form_controller/loadFormSearch','refresh');
 	}
-	}
-	?>
+}
+?>

@@ -14,28 +14,7 @@
 		</div>
 
 		<div id="content" class="content">
-		<!-- 	<div class=" panel-default" id="head" name="head">
-			  	<div class="panel-body" id="banner" name="banner">
-			   		<img src="">
-			  	</div>
-			  	<nav class="navbar navbar-default" id="menubar" name="menubar">
-				  	<div class="container-fluid">
-				    	<a class="navbar-brand disabled">ผู้ใช้งาน : <?php echo $username;?></a>
-					    <form class="navbar-form navbar-left">
-					        <button class="btn btn-default" type="button" id="logout" name="logout"><?php echo anchor('auth/logout','ออกจากระบบ');?></button>
-					    </form>
-					    <ul class="nav navbar-nav navbar-right">
-					    	
-						    <li><a class="navbar-brand">หน้า : </a></li>
-						    <li class="active"><a>1</a></li>
-						    <li><?php echo anchor('form_controller/loadUploadSign','2');?></li>
-						    <li><?php echo anchor('form_controller/loadUploadRightHand','3');?></li>
-						    <li><?php echo anchor('form_controller/loadUploadLeftHand','4');?></li>
-						    <li><?php echo anchor('form_controller/loadUploadBothHand','5');?></li>
-						</ul>
-				  	</div>
-				</nav>
-			</div> -->
+		
 			<div class="panel panel-default" id="body" class="body">
 
 		        <div class="panel-heading row" id="title" class="title">
@@ -45,7 +24,7 @@
 		        <div class="row">
 			      
 
-					<div id="divTable" class="col-md-6" style="display:block; margin-left:250px;">
+					<div id="divTable" class="row col-md-6" style="display:block; margin-left:250px;">
 						<table  id="tableResult"class="table table-striped col-md-6">
 						<thead>
 							<th class="col-md-3">  Finger Position </th>
@@ -57,24 +36,38 @@
 
 							echo "<tr class='result'>";
 							// echo base_url().$key;
+							$fingerPos= "Un";
 							$subFile =  explode("/",$key);
 							$subFilename = explode("_", $subFile[4]);
-							$fingerPos = $subFilename[0]." ".$subFilename[1];
+							$subFilenamefingerPos = $subFilename[1];
+							$subFilenamefingerPosSplit = explode(".", $subFilenamefingerPos);
+							$subFilenamefingerPosWithoutExt = $subFilenamefingerPosSplit[0];
 							$fingerPosFolder = $subFilename[0]."_".$subFilename[1];
+							if($subFilenamefingerPosWithoutExt == "R0") $fingerPos = "Right Thumb"; 
+							else if($subFilenamefingerPosWithoutExt == "R1") $fingerPos = "Right Fore"; 
+							else if($subFilenamefingerPosWithoutExt == "R2") $fingerPos = "Right Middle"; 
+							else if($subFilenamefingerPosWithoutExt == "R3") $fingerPos = "Right Ring"; 
+							else if($subFilenamefingerPosWithoutExt == "R4") $fingerPos = "Right Little"; 
 
-							// $id = 21;
+							else if($subFilenamefingerPosWithoutExt == "L0") $fingerPos = "Left Thumb"; 
+							else if($subFilenamefingerPosWithoutExt == "L1") $fingerPos = "Left Fore"; 
+							else if($subFilenamefingerPosWithoutExt == "L2") $fingerPos = "Left Middle"; 
+							else if($subFilenamefingerPosWithoutExt == "L3") $fingerPos = "Left Ring"; 
+							else if($subFilenamefingerPosWithoutExt == "L4") $fingerPos = "Left Little"; 
+
 							echo "<td>".$fingerPos."</td>";
 	  						echo "<td class='Original_result '><img "."src='".base_url().$key . "'></img></td>";
-	  							
-	  						echo "<td class='Match_result '><img "."src='".base_url().$FingerMatchesImages[$i] . "'></img></td>";
-	  						echo "<td>".$score[$i]."</td></tr>";
-	  						$i++;
+	  						// print_r( $FingerMatchesImages[$i] );
+	  						echo "<td class='Match_result '><img "."src='".base_url().key($scoreAndImg[$i]) . "'></img></td>";
+	  						echo "<td>".reset($scoreAndImg[$i])."</td></tr>";
+	  						$i++; 
+	  						
 	  						}
 	  					?>
 						</table>
 					</div>
 
-
+<!-- 
 					<div  class="col-md-6" style="display:block; margin-left:250px;">
 						<table  class="table table-striped col-md-6">
 						<thead>
@@ -110,12 +103,19 @@
 	  					}
 	  					?>
 						</table>
-					</div>
+					</div> -->
 
 
 									
 
 				</div>
+
+					 <div class="row">
+					 <a href= <?php echo base_url().'index.php/'."form_controller/loadForm1"?> >
+					  	<button type="submit" name="submit"  class="btn btn-primary btn-lg" style="display:block; float:right; margin-right:30%; margin-bottom:20px;" >
+							กลับสู่หน้าหลัก </button>
+					</a> </div>
+
 		    </div>
 
 		</div>

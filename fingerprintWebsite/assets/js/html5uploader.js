@@ -14,14 +14,17 @@
 *	IE 6+
 */
 
-function uploader(place,targetPHP,email) {
+function uploader(email,targetPHP,place) {
+
 	// Upload image files
 	upload = function(file) {
+
 		var filename = file.name;
 		var dot = filename.lastIndexOf('.')+1;
 		var filetype = filename.substring(dot);
+
 		// filename = place+'.'+filetype;
-		filename = place+'_'+email+'.'+filetype;
+		filename = email+'_'+place+'.'+filetype;
 		file.name = filename;
 		// Firefox 3.6, Chrome 6, WebKit
 		if(window.FileReader) { 

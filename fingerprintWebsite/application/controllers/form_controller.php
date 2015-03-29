@@ -52,13 +52,47 @@ class Form_controller extends CI_Controller
 		else redirect('auth/loadLogin','refresh');
 	}
 
+		// render form page without data
+	function loadFormFingerImage(){
+		if($this->ion_auth->logged_in()){
+			$userdata = $this->session->userdata('userdata');
+			$data['email'] = $userdata['email'];
+			$data['username'] = $userdata['username'];
+			$mask = 'assets/images/temporary/'.$userdata['email'].'/*';
+			// echo $mask;
+			array_map('unlink', glob($mask));
+			$this->load->view('forms/uploadFingerKnownPosition',$data);
+			
+			//$this->load->view('forms/uploadSignature',$data);
+
+		}
+		else redirect('auth/loadLogin','refresh');
+	}
+
+		function loadFormUnknowFingerImage(){
+		if($this->ion_auth->logged_in()){
+			$userdata = $this->session->userdata('userdata');
+			$data['email'] = $userdata['email'];
+			$data['username'] = $userdata['username'];
+			$mask = 'assets/images/temporary/'.$userdata['email'].'/*';
+			// echo $mask;
+			array_map('unlink', glob($mask));
+			$this->load->view('forms/uploadFingerUnKnownPosition',$data);
+			
+			//$this->load->view('forms/uploadSignature',$data);
+
+		}
+		else redirect('auth/loadLogin','refresh');
+	}
+
 	// render form page without data
 	function loadForm1(){
 		if($this->ion_auth->logged_in()){
 			$userdata = $this->session->userdata('userdata');
 			$data['email'] = $userdata['email'];
 			$data['username'] = $userdata['username'];
-			$this->load->view('forms/uploadRightHand',$data);
+			// $this->load->view('forms/uploadFingerKnownPosition',$data);
+			 $this->load->view('SelectIdentifyVerify_view',$data);
 			//$this->load->view('forms/uploadSignature',$data);
 
 		}
@@ -106,82 +140,13 @@ class Form_controller extends CI_Controller
 	}
 
 
-	// render image upload page
-	function loadUploadSign(){
-		$userdata = $this->session->userdata('userdata');
-		$data['email'] = $userdata['email'];
-		$data['username'] = $userdata['username'];
-		if ($this->ion_auth->logged_in()) {
-			$this->load->view('forms/uploadSignature',$data);
-			// $this->load->view('forms/uploadSignatureArea',$data);
-		}
-		else{
-			redirect('auth/loadLogin','refresh');
-		}
-	}
-
-	// render image upload page
-	function loadUploadBothHand(){
-		$userdata = $this->session->userdata('userdata');
-		$data['email'] = $userdata['email'];
-		$data['username'] = $userdata['username'];
-		if ($this->ion_auth->logged_in()) {
-			$this->load->view('forms/uploadBothHand',$data);
-			// $this->load->view('forms/uploadBothHandArea',$data);
-		}
-		else{
-			redirect('auth/loadLogin','refresh');
-		}
-	}
-
-	// render image upload page
-	function loadUploadRightHand(){
-		$userdata = $this->session->userdata('userdata');
-		$data['email'] = $userdata['email'];
-		$data['username'] = $userdata['username'];
-		if ($this->ion_auth->logged_in()) {
-			$this->load->view('forms/uploadRightHand',$data);
-			// $this->load->view('forms/uploadRightHandArea',$data);
-		}
-		else{
-			redirect('auth/loadLogin','refresh');
-		}
-	}
-
-	// render image upload page
-	function loadUploadLeftHand(){
-		$userdata = $this->session->userdata('userdata');
-		$data['email'] = $userdata['email'];
-		$data['username'] = $userdata['username'];
-		if ($this->ion_auth->logged_in()) {
-			$this->load->view('forms/uploadLeftHand',$data);
-			// $this->load->view('forms/uploadLeftHandArea',$data);
-		}
-		else{
-			redirect('auth/loadLogin','refresh');
-		}
-	}
-
-	// render image upload page
-	function loadFormSearch(){
-		$userdata = $this->session->userdata('userdata');
-		$data['email'] = $userdata['email'];
-		$data['username'] = $userdata['username'];
-		$data = $this->session->flashdata('data');
-		if ($this->ion_auth->logged_in()) {
-			$this->load->view('forms/formsearch',$data);
-		}
-		else{
-			redirect('auth/loadLogin','refresh');
-		}
-	}
-
 	// upload file from upload area
 	function ajaxupload(){
 		$userdata = $this->session->userdata('userdata');
+		$email = $userdata['email'];
 
 		// Destination folder for downloaded files
-		$upload_folder = 'assets/images/temporary';
+		$upload_folder = 'assets/images/temporary/'.$email;
 		if(!file_exists($upload_folder)) mkdir($upload_folder,0777);
 		
 		if(count($_FILES)>0) { 
@@ -191,7 +156,8 @@ class Form_controller extends CI_Controller
 			$realname = substr($filename, 0,$ind);
 			$mask = $upload_folder.'/'.$realname.'.*';
 			$ext = substr($ext, 1);
-			$in = strpos($filename, '_'.$userdata['email']);
+			$in = strpos( $userdata['email'],'_'.$filename);
+			echo $in;
 			$sessionname = substr($filename,0, $in);
 			array_map('unlink', glob($mask));
 			if( move_uploaded_file( $_FILES['upload']['tmp_name'] , $upload_folder.'/'.$_FILES['upload']['name'] ) ) {
@@ -222,7 +188,7 @@ class Form_controller extends CI_Controller
 			$sessionname = substr($filename,0, $in);
 			array_map('unlink', glob($mask));
 
-			if(file_put_contents($upload_folder.'/'.$headers['UP-FILENAME'], $content)) {
+			if(file_put_contents($upload_folder.'/'.$headers['UP-FILENAME']  , $content)) {
 				$fileext = pathinfo($headers['UP-FILENAME'],PATHINFO_EXTENSION);
 				$this->session->set_userdata($sessionname,$ext);
 				echo 'done';
