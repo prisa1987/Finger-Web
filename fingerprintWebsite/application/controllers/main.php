@@ -119,6 +119,8 @@
 				$fingerPos = $subFilename[1];
 				$fingerPosWithoutExtSplit = explode(".", 	$fingerPos );
 				$fingerPosWithoutExt = $fingerPosWithoutExtSplit[0];
+			//	$organisation = $organisation;
+				
 				// $fingerPosFolder = $subFilename[0]."_".$subFilename[1];
 				// echo $fingerPosWithoutExt."</br>";
 				if($fingerPosWithoutExt == "R0") array_push($FingerMatchesImages,$this->getMatchesImage_right_thumb($id,$organisation));
@@ -153,7 +155,7 @@
 			$Folder = 'left_fore/';
 			$id_Folder = $id.'_'.$Folder;
 			$fingerPosition = 'L1';
-			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_"."*".".*";
 			$result = glob ($File );
 			
 			$images = $File;
@@ -168,7 +170,7 @@
 			$Folder = 'left_little/';
 			$id_Folder = $id.'_'.$Folder;
 			$fingerPosition = 'L4';
-			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_"."*".".*";
 			$result = glob ($File );
 			
 			$images = $File;
@@ -183,7 +185,7 @@
 			$Folder = 'left_middle/';
 			$id_Folder = $id.'_'.$Folder;
 			$fingerPosition = 'L2';
-			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_"."*".".*";
 			$result = glob ($File );
 			
 			$images = $File;
@@ -198,7 +200,7 @@
 			$Folder = 'left_ring/';
 			$id_Folder = $id.'_'.$Folder;
 			$fingerPosition = 'L3';
-			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_"."*".".*";
 			$result = glob ($File );
 			
 			$images = $File;
@@ -213,8 +215,8 @@
 			$Folder = 'left_thumb/';
 			$id_Folder = $id.'_'.$Folder;
 			$fingerPosition = 'L0';
-			echo "or: ". $organisation;
-			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
+			// echo "or: ". $organisation;
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_"."*".".*";
 
 			// echo $File;
 			$result = glob ($File );
@@ -232,7 +234,7 @@
 			$Folder = 'right_fore/';
 			$id_Folder = $id.'_'.$Folder;
 			$fingerPosition = 'R1';
-			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_"."*".".*";
 			$result = glob ($File );
 		//	print_r($result);
 						//$images = $File;
@@ -247,7 +249,7 @@
 			$Folder = 'right_little/';
 			$id_Folder = $id.'_'.$Folder;
 			$fingerPosition = 'R4';
-			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_"."*".".*";
 			$result = glob ($File );
 			
 			$images = $File;
@@ -262,7 +264,7 @@
 			$Folder = 'right_middle/';
 			$id_Folder = $id.'_'.$Folder;
 			$fingerPosition = 'R2';
-			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_"."*".".*";
 		$result = glob ($File );
 			
 			$images = $File;
@@ -277,7 +279,7 @@
 			$Folder = 'right_ring/';
 			$id_Folder = $id.'_'.$Folder;
 			$fingerPosition = 'R3';
-			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_"."*".".*";
 			$result = glob ($File );
 		
 			if(count($result)> 0){
@@ -291,7 +293,7 @@
 			$Folder = 'right_thumb/';
 			$id_Folder = $id.'_'.$Folder;
 			$fingerPosition = 'R0';
-			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_".$id.".*";
+			$File = $path.$Folder.$id_Folder.$id."_".$organisation."_".$fingerPosition."_"."*".".*";
 
 			// echo $File;
 			$result = glob ($File );
